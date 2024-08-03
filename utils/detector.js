@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-const keywords = ['judi', 'casino', 'poker', 'taruhan', 'slot'];
+const keywords = ['judi', 'casino', 'poker', 'taruhan', 'slot', 'gacor', 'withdraw'];
 
 async function fetchHTML(url) {
     try {
@@ -12,14 +12,13 @@ async function fetchHTML(url) {
     
         // Check for successful response
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
     
         const body = await response.text();
         return body;
       } catch (error) {
-        console.error('Error:', error);
-        return error.message; // Or handle the error differently
+        return false; // Or handle the error differently
       }
 }
 
@@ -28,23 +27,38 @@ function containsNegativeContent($, keywords) {
     return keywords.some(keyword => text.includes(keyword));
 }
 
-async function detectNegativeContent(url) {
+function countKeywords($, keywords) {
+    const text = $('body').text().toLowerCase();
+    const keywordCounts = {};
+  
+    keywords.forEach(keyword => {
+      keywordCounts[keyword] = (text.match(new RegExp(keyword, 'gi')) || []).length;
+    });
+  
+    return keywordCounts;
+}
+
+async function detectNegativeContent(urls) {
     const results = [];
 
-    const html = await fetchHTML(url);
-    if (html) {
-        const $ = cheerio.load(html); // Create a Cheerio object
-        const hasNegativeContent = containsNegativeContent($, keywords);
-        results.push({ url, hasNegativeContent });
-    } else {
-        results.push({ url, error: 'Failed to fetch HTML' });
-    }
+    const promises = urls.map(async url => {
+        const html = await fetchHTML(url);
+        if (html) {
+            const $ = cheerio.load(html);
+            const hasNegativeContent = containsNegativeContent($, keywords);
+            const keywordCounts = countKeywords($, keywords);
+            return { url, hasNegativeContent, ...keywordCounts };
+        } else {
+            return { url, error: 'Failed to fetch HTML' };
+        }
+    });
+  
+    const resultsArray = await Promise.all(promises);
 
-    console.log(results);
-
-    // return results;
+    // console.log(resultsArray)
+    return resultsArray;
 }
 
 module.exports = {
-  detectNegativeContent,
+    detectNegativeContent,
 };

@@ -3,6 +3,7 @@ const path = require('path');
 const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
 const routeDashboard = require('./routes/dashboard.js');
+const session = require('express-session');
 const app = express();
 
 
@@ -14,6 +15,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+    secret: 'dF9!h3J7kL2pQ5R8T0vW1X4Y6Z9aBcDeFg', // Replace with a strong secret
+    resave: false,
+    saveUninitialized: true
+}));
 
 app.use('/', routeDashboard);
 
