@@ -8,4 +8,7 @@ router.route('/')
 router.route('/dashboard')
     .get(dashboard.renderResult);
 
+router.route('/submit')
+    .post(dashboard.processForm);
+
 module.exports = router;
