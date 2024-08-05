@@ -25,35 +25,52 @@
     <div class="mt-5">
         <h5>Website Analysis Results</h5>
         <div class="row">
-          <% results.forEach(function(result) { %>  <div class="col-md-6 mb-3">
-              <div class="card">
-                <div class="card-header">
-                  <%= result.url %> (<%= result.hasNegativeContent ? 'Perjudian' : 'Normal' %>)
-                  <div class="dropdown float-end">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton<%= result.url %>" data-bs-toggle="dropdown" aria-expanded="false">
-                      Details
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton<%= result.url %>">
-                      <% if (result.hasOwnProperty('judi')) { %>  <% for (const keyword in result) { %>   <% if (keyword !== 'url' && keyword !== 'hasNegativeContent') { %>
-                            <li><%= keyword %>: <%= result[keyword] %></li>
-                          <% } %>
-                        <% } %>
-                      <% } else { %>  <li>No keyword counts available.</li>
-                      <% } %>
-                    </ul>
-                  </div>
-                </div>
-                <% if (result.error) { %>  <div class="card-body">
-                    <p class="text-danger">Error: <%= result.error %></p>
-                  </div>
-                <% } else { %>  <div class="card-body">
-                    <% if (result.hasNegativeContent) { %>  <p class="text-danger">Website contains negative content.</p>
-                    <% } else { %>  <p class="text-success">Website appears safe.</p>
+            <% results.forEach(function(result) { %>  
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <a href="https://<%= result.url %>" class="link-dark link-underline-opacity-0" target="_blank">
+                                    <p><%= result.url %></p>
+                                </a>
+                                <p class="ms-2">
+                                    <% if (result.hasNegativeContent) { %>
+                                        <span class="text-danger">(Perjudian)</span>
+                                    <% } else if (result.error) { %>
+                                        <span class="text-warning">(Error)</span>
+                                    <% } else { %>
+                                        <span class="text-success">(Normal)</span>
+                                    <% } %>
+                                </p>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton<%= result.url %>" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Details
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton<%= result.url %>">
+                                    <% if (result.hasOwnProperty('judi')) { %>
+                                        <% for (const keyword in result) { %>
+                                            <% if (keyword !== 'url' && keyword !== 'hasNegativeContent') { %>
+                                                <li><%= keyword %>: <%= result[keyword] %></li>
+                                            <% } %>
+                                        <% } %>
+                                    <% } else { %>
+                                        <li>No keyword counts available.</li>
+                                    <% } %>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <% if (result.url != result.redirect && !result.error) { %>
+                    <div class="card-body">
+                        <p class="text-danger">Redirect: <a href="https://<%= result.redirect %>" class="link-dark link-underline-opacity-0" target="_blank" class=""><%= result.redirect %></a> </p>
+                    </div>
                     <% } %>
-                  </div>
-                <% } %>  </div>
+                </div>
             </div>
-        <% }); %>  </div>
+            <% }); %>  
+        </div>
     </div>
 </body>
 

@@ -1,64 +1,67 @@
 const cheerio = require('cheerio');
-const keywords = ['judi', 'casino', 'poker', 'taruhan', 'slot', 'gacor', 'withdraw'];
+const axios = require('axios'); // Using axios for redirect handling
+
+const keywords = ['judi', 'casino', 'poker', 'slot', 'gacor', 'withdraw', 'togel', 'depo', 'maxxwin', 'jackpot'];
 
 async function fetchHTML(url) {
-    try {
-        // Ensure URL starts with http(s)://
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-          url = 'https://' + url;
-        }
+  // Ensure URL starts with http(s)://
+  
+  try {
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      newUrl = 'https://' + url;
+    }
     
-        const response = await fetch(url);
-    
-        // Check for successful response
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-    
-        const body = await response.text();
-        return body;
-      } catch (error) {
-        return false; // Or handle the error differently
-      }
+    const response = await axios.get(newUrl, {
+      // Follow redirects automatically (up to a reasonable limit)
+      maxRedirects: 100,
+      // Validate response status (optional, depending on your needs)
+      validateStatus: (status) => status >= 200 && status < 300,
+    });
+
+    // console.log(response)
+    return response; // Assuming response.data contains the HTML content
+  } catch (error) {
+    return { url, error: 'Failed to fetch HTML' };
+  }
 }
 
 function containsNegativeContent($, keywords) {
-    const text = $('body').text().toLowerCase();
-    return keywords.some(keyword => text.includes(keyword));
+  const text = $('body').text().toLowerCase();
+  return keywords.some(keyword => text.includes(keyword));
 }
 
 function countKeywords($, keywords) {
-    const text = $('body').text().toLowerCase();
-    const keywordCounts = {};
-  
-    keywords.forEach(keyword => {
-      keywordCounts[keyword] = (text.match(new RegExp(keyword, 'gi')) || []).length;
-    });
-  
-    return keywordCounts;
+  const text = $('body').text().toLowerCase();
+  const keywordCounts = {};
+
+  keywords.forEach(keyword => {
+    keywordCounts[keyword] = (text.match(new RegExp(keyword, 'gi')) || []).length;
+  });
+
+  return keywordCounts;
 }
 
 async function detectNegativeContent(urls) {
-    const results = [];
+  const results = [];
 
-    const promises = urls.map(async url => {
-        const html = await fetchHTML(url);
-        if (html) {
-            const $ = cheerio.load(html);
-            const hasNegativeContent = containsNegativeContent($, keywords);
-            const keywordCounts = countKeywords($, keywords);
-            return { url, hasNegativeContent, ...keywordCounts };
-        } else {
-            return { url, error: 'Failed to fetch HTML' };
-        }
-    });
-  
-    const resultsArray = await Promise.all(promises);
+  for (const url of urls) {
+    const htmlOrError = await fetchHTML(url);
 
-    // console.log(resultsArray)
-    return resultsArray;
+    if (htmlOrError.error) {
+      results.push(htmlOrError);
+    } else {
+      const $ = cheerio.load(htmlOrError.data); // Assuming htmlOrError contains the HTML
+      const hasNegativeContent = containsNegativeContent($, keywords);
+      const keywordCounts = countKeywords($, keywords);
+      const redirect = htmlOrError.request.socket.servername
+      console.log(redirect)
+      results.push({ url, redirect, hasNegativeContent, ...keywordCounts });
+    }
+  }
+
+  return results;
 }
 
 module.exports = {
-    detectNegativeContent,
+  detectNegativeContent,
 };
