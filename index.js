@@ -29,6 +29,7 @@ app.listen(port, ()=>{
 })
 
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    console.error('Error stack:', err.stack);
+    console.error('Error message:', err.message);
     res.status(500).send('Something broke!');
 });
