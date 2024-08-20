@@ -128,3 +128,39 @@ body{
     color: white;
     
 }
+
+/*Responsif*/
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .logo-group img {
+        max-width: 150px;
+        margin: 0 5px;
+    }
+    .btn-popup {
+        font-size: 1rem;
+    }
+    .btn-export {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .logo-group {
+        flex-direction: column;
+    }
+    .logo-group img {
+        max-width: 120px;
+        margin: 5px 0;
+    }
+    .btn-popup, .btn-export {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
