@@ -1,15 +1,14 @@
 body{
     background-color: #F9E8C9;
+    border-top: 20px solid #201E43;
 }
 .form-control{
     background-color: #E4E4E4;
-    margin-bottom: 60px;
+    margin-bottom: 10px;
     width: 100%;
-    height: 80px;
+    height: 400px;
 }
-.shadow-form-control {
-    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
-}
+
 .form-container {
     padding: 0; 
     margin: 0 auto;
@@ -46,8 +45,18 @@ body{
     justify-content: flex-end;
     margin-bottom: 1rem;
 }
+
 .btn-export {
     background-color:#279EFF;
+    border: none;
+    padding: 0.25em 0.75em;
+    min-width: 10ch;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+       
 }
 .submit-btn-container {
     display: flex;
@@ -56,10 +65,66 @@ body{
 }
 .btn-submit {
     background-color:#279EFF;
+    border: none;
+    padding: 0.25em 0.75em;
+    min-width: 10ch;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
 }
-.shadow-submit {
-    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
 }
-.shadow-export {
-    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
+
+.header-title {
+    margin: 0;
+}
+
+.export-btn-container {
+    padding: 70px;
+    margin: 0;
+}
+
+/*Popup*/
+
+.text-center{
+    width: 900px;
+    padding: 0; 
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 11vh;
+    
+}
+.btn-popup{
+    border:none;
+    background-color: #E4E4E4;    
+    height: 70px;
+    border-radius: 4px;
+    display: block;
+    width: 100%;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s; 
+}
+.modal-header{
+    background-color: #F9E8C9;
+}
+
+.btn-submit:hover, .btn-export:hover {
+    background-color: #0056b3; 
+    color: white;
+    transform: scale(1.05); 
+}
+.btn-submit, .btn-export {
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+}
+.btn-popup:hover {
+    background-color: #6a6d70;
+    color: white;
+    
 }
