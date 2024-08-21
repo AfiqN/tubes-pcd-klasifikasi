@@ -14,7 +14,7 @@
     <div class="top-border"></div>
     <div class="container">        
         <div class="form-container d-flex flex-column justify-content-center align-items-center">
-            
+            <!-- Logo Group -->
             <div class="logo-group d-flex justify-content-center mb-4">
                 <img src="/media/component/logo_kominfo.svg" alt="Logo 1" class="mx-2" style="max-width: 200px;">
                 <img src="/media/component/logo_ais.svg" alt="Logo 2" class="mx-2" style="max-width: 200px;">
@@ -136,33 +136,19 @@
         
         <script>
             document.getElementById('urlForm').onsubmit = function(event) {
-                event.preventDefault(); 
+                event.preventDefault(); // Mencegah pengiriman form secara langsung
 
-                
+                // Menyembunyikan tombol submit dan menampilkan loader
                 var submitButton = document.getElementById('submitButton');
                 var loadingSpinner = document.getElementById('loadingSpinner');
                 
                 submitButton.style.display = 'none';
                 loadingSpinner.style.display = 'inline-block';
 
-                
+                // Mengirim form secara manual setelah loader ditampilkan
                 setTimeout(() => {
-                    
-                    loadingSpinner.style.display = 'none';
-                    submitButton.style.display = 'inline-block'; 
-
-                    
-                    document.getElementById('resultsSection').style.display = 'block';
-
-                    
-                    var modal = bootstrap.Modal.getInstance(document.getElementById('formModal'));
-                    modal.hide();
-
-                    
-                    setTimeout(() => {
-                        document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
-                    }, 100);
-                }, 2000); 
+                    this.submit(); // Melanjutkan pengiriman form setelah beberapa saat (untuk efek)
+                }, 1000); // Anda dapat menyesuaikan waktu tunggu (ms)
             };
             function showResults() {
                 var resultsContainer = document.getElementById('results');
