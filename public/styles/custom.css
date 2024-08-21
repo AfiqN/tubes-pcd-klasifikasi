@@ -24,10 +24,10 @@ body{
     padding: auto;
 }
 .logo-group{
-    border: 0px solid #ccc; /* Contoh border untuk grup */
-    padding: 10px; /* Padding di sekitar gambar */
-    border-radius: 10px; /* Membuat sudut border melengkung */
-    background-color: #F9E8C9; /* Background untuk grup */
+    border: 0px solid #ccc; 
+    padding: 10px; 
+    border-radius: 10px; 
+    background-color: #F9E8C9; 
 }
 .card{
     background-color: #E4E4E4;
