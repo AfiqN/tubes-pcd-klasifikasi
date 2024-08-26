@@ -2,7 +2,7 @@ const cheerio = require('cheerio');
 const axios = require('axios'); // Using axios for redirect handling
 
 const keywords = ['judi', 'casino', 'poker', 'slot', 'gacor', 'withdraw', 'togel', 'depo', 'maxxwin', 'jackpot'];
-const keywordsPorno = ['sex', 'porno', 'bacol', 'mesum', 'ngewe', 'bdsm', 'kontol', 'ngentot', 'memek', 'porn', 'xxx', 'adult', 'erotic', 'nude', 'naked', 'fetish', 'hentai', 'masturbation', 'orgasm', 'explicit', 'sexual', 'sensual', 'smut', 'voyeur', 'lewd', 'kinky', 'dominatrix', 'bondage', 'pornhub', 'redtube', 'xvideos', 'onlyfans', 'bangbros', 'brazzers', 'xnxx', 'livejasmin', 'pornographic content', 'adult entertainment', 'sex videos', 'adult images', 'pornographic material', 'sexual content', 'roleplay', 'sex games', 'fetish wear', 'camgirls', 'amateur porn', 'webcam girls']
+const keywordsPorno = ['porno', 'bacol', 'mesum', 'ngewe', 'bdsm', 'kontol', 'ngentot', 'memek', 'porn', 'xxx', 'adult', 'erotic', 'nude', 'naked', 'fetish', 'hentai', 'masturbation', 'orgasm', 'explicit', 'sexual', 'sensual', 'smut', 'voyeur', 'lewd', 'kinky', 'dominatrix', 'bondage', 'pornhub', 'redtube', 'xvideos', 'onlyfans', 'bangbros', 'brazzers', 'xnxx', 'livejasmin', 'pornographic content', 'adult entertainment', 'sex videos', 'adult images', 'pornographic material', 'sexual content', 'roleplay', 'sex games', 'fetish wear', 'camgirls', 'amateur porn', 'webcam girls']
 
 async function fetchHTML(url) {
   let newUrl = url;
@@ -37,10 +37,18 @@ function countKeywords($, keywords) {
   return keywordCounts;
 }
 
-async function detectNegativeContent(urls) {
+async function detectNegativeContent(urls, notInDB) {
   const results = [];
 
+  console.log(urls)
+  console.log(notInDB)
+
   for (const url of urls) {
+    if (notInDB.includes(url)) {
+      results.push({ url, inDB: true })
+      continue
+    }
+    
     const htmlOrError = await fetchHTML(url);
 
     if (htmlOrError.error) {
@@ -56,6 +64,7 @@ async function detectNegativeContent(urls) {
     }
   }
 
+  console.log(results)
   return results;
 }
 

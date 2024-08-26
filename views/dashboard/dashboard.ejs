@@ -11,9 +11,9 @@
    
 </head>
 <body>
-    <div class="top-border"></div>
     <div class="container">        
-        <div class="form-container d-flex flex-column justify-content-center align-items-center">
+        <div class="top-border"></div>
+        <div class="form-container flex-column justify-content-center align-items-center">
             <!-- Logo Group -->
             <div class="logo-group d-flex justify-content-center mb-4">
                 <img src="/media/component/logo_kominfo.svg" alt="Logo 1" class="mx-2" style="max-width: 200px;">
@@ -57,9 +57,11 @@
                 </div>
             </div>
         </div>
-
         <div id="loader" class="loader"></div>
+    </div>
 
+
+    <div class="container">    
         <div id="resultsSection" class="mt-5" style="display: none;">
             <div class="result-header"> 
                 <h5 class="header-title">Website Analysis Results</h5>              
@@ -85,6 +87,8 @@
                                             <span class="text-danger">(Perjudian)</span>
                                         <% } else if (result.error) { %>
                                             <span class="text-warning">(Error)</span>
+                                        <% } else if (result.inDB) { %>
+                                            <span class="text-success">(Ada di DB)</span>
                                         <% } else { %>
                                             <span class="text-success">(Normal)</span>
                                         <% } %>
@@ -95,7 +99,7 @@
                                         Details
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton<%= index %>">
-                                        <% if (!result.error) { %>
+                                        <% if (!result.error && !result.inDB) { %>
                                             <% 
                                                 let hasKeywords = false;
                                                 Object.entries(result.keywordCounts).forEach(([keyword, count]) => {
@@ -120,7 +124,7 @@
                                 </div>
                             </div>
                         </div>
-                        <% if (result.url != result.redirect && !result.error) { %>
+                        <% if (result.url != result.redirect && !result.error && !result.inDB) { %>
                         <div class="card-body">
                             <p class="text-danger">Redirect: <a href="https://<%= result.redirect %>" class="link-dark link-underline-opacity-0" target="_blank"><%= result.redirect %></a></p>
                         </div>
@@ -130,40 +134,38 @@
                 <% }); %>  
             </div>
         </div>
-        
-        
+    </div>
+   
+    <script>
+        document.getElementById('urlForm').onsubmit = function(event) {
+            event.preventDefault(); // Mencegah pengiriman form secara langsung
 
-        
-        <script>
-            document.getElementById('urlForm').onsubmit = function(event) {
-                event.preventDefault(); // Mencegah pengiriman form secara langsung
+            // Menyembunyikan tombol submit dan menampilkan loader
+            var submitButton = document.getElementById('submitButton');
+            var loadingSpinner = document.getElementById('loadingSpinner');
+            
+            submitButton.style.display = 'none';
+            loadingSpinner.style.display = 'inline-block';
 
-                // Menyembunyikan tombol submit dan menampilkan loader
-                var submitButton = document.getElementById('submitButton');
-                var loadingSpinner = document.getElementById('loadingSpinner');
-                
-                submitButton.style.display = 'none';
-                loadingSpinner.style.display = 'inline-block';
+            // Mengirim form secara manual setelah loader ditampilkan
+            setTimeout(() => {
+                this.submit(); // Melanjutkan pengiriman form setelah beberapa saat (untuk efek)
+            }, 1000); // Anda dapat menyesuaikan waktu tunggu (ms)
+        };
+        function showResults() {
+            var resultsContainer = document.getElementById('results');
+            var resultsSection = document.getElementById('resultsSection');
 
-                // Mengirim form secara manual setelah loader ditampilkan
-                setTimeout(() => {
-                    this.submit(); // Melanjutkan pengiriman form setelah beberapa saat (untuk efek)
-                }, 1000); // Anda dapat menyesuaikan waktu tunggu (ms)
-            };
-            function showResults() {
-                var resultsContainer = document.getElementById('results');
-                var resultsSection = document.getElementById('resultsSection');
-
-                
-                if (resultsContainer.children.length > 0) {
-                    document.getElementById('loader').style.display = 'none';
-                    resultsSection.style.display = 'block';
-                } else {
-                    resultsSection.style.display = 'none';
-                }
-            }    
-            showResults();
-        </script>
+            
+            if (resultsContainer.children.length > 0) {
+                document.getElementById('loader').style.display = 'none';
+                resultsSection.style.display = 'block';
+            } else {
+                resultsSection.style.display = 'none';
+            }
+        }    
+        showResults();
+    </script>
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>

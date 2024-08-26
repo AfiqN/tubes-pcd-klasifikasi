@@ -7,7 +7,10 @@ module.exports.landingPage = async (req, res) => {
 module.exports.processForm = async (req, res) => {
     const { listUrl, listDb } = req.body;
 
-    const detectionResults = await detectNegativeContent(listUrl.split(/\r?\n/));
+    const detectionResults = await detectNegativeContent(
+        listUrl.split(/\r?\n/),
+        listDb.split(/\r?\n/),
+    );
     req.session.detectionResults = detectionResults;
 
     res.redirect(`/dashboard`);
