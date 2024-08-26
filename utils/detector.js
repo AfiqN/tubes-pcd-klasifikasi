@@ -1,5 +1,6 @@
 const cheerio = require('cheerio');
 const axios = require('axios'); // Using axios for redirect handling
+const XLSX = require('xlsx')
 
 const keywords = ['judi', 'casino', 'poker', 'slot', 'gacor', 'withdraw', 'togel', 'depo', 'maxxwin', 'jackpot'];
 const keywordsPorno = ['porno', 'bacol', 'mesum', 'ngewe', 'bdsm', 'kontol', 'ngentot', 'memek', 'porn', 'xxx', 'adult', 'erotic', 'nude', 'naked', 'fetish', 'hentai', 'masturbation', 'orgasm', 'explicit', 'sexual', 'sensual', 'smut', 'voyeur', 'lewd', 'kinky', 'dominatrix', 'bondage', 'pornhub', 'redtube', 'xvideos', 'onlyfans', 'bangbros', 'brazzers', 'xnxx', 'livejasmin', 'pornographic content', 'adult entertainment', 'sex videos', 'adult images', 'pornographic material', 'sexual content', 'roleplay', 'sex games', 'fetish wear', 'camgirls', 'amateur porn', 'webcam girls']
@@ -44,7 +45,7 @@ async function detectNegativeContent(urls, notInDB) {
   console.log(notInDB)
 
   for (const url of urls) {
-    if (notInDB.includes(url)) {
+    if (!(notInDB.includes(url))) {
       results.push({ url, inDB: true })
       continue
     }

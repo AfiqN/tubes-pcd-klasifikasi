@@ -11,4 +11,7 @@ router.route('/dashboard')
 router.route('/submit')
     .post(dashboard.processForm);
 
+router.route('/export')
+    .get(dashboard.exportResult)
+
 module.exports = router;
