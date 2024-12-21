@@ -11,160 +11,70 @@
    
 </head>
 <body>
-    <div class="container">        
-        <div class="top-border"></div>
-        <div class="form-container flex-column justify-content-center align-items-center">
-            <!-- Logo Group -->
-            <div class="logo-group d-flex justify-content-center mb-4">
-                <img src="/media/component/logo_kominfo.svg" alt="Logo 1" class="mx-2" style="max-width: 200px;">
-                <img src="/media/component/logo_ais.svg" alt="Logo 2" class="mx-2" style="max-width: 200px;">
-                <img src="/media/component/logo_aduan.svg" alt="Logo 3" class="mx-2" style="max-width: 200px;">
-            </div>
-
-            <div class="text-center my-4">
-                <button type="button" class="btn-popup" data-bs-toggle="modal" data-bs-target="#formModal">
-                    Input Data...
-                </button>
-            </div>
-            <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="formModalLabel">Cari Data</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="urlForm" method="post" action="/submit" class="d-flex flex-column">                            
-                                
-                                <div class="d-flex">
-                                    <div class="flex-fill me-2 ">
-                                        <label for="input-list-url" class="form-label">Input List URL</label>
-                                        <textarea class="form-control" name="listUrl" id="input-list-url"></textarea>
-                                    </div>
-                                    <div class="flex-fill">
-                                        <label for="input-list-db" class="form-label">Input List yang Tidak Ada di DB</label>
-                                        <textarea class="form-control" name="listDb" id="input-list-db" ></textarea>
-                                    </div>
-                                </div>
-                                
-                                <div class="submit-btn-container text-center mt-3">
-                                    <button id="submitButton" type="submit" class="btn btn-primary">Submit</button>
-                                    <div id="loadingSpinner" class="loader" role="status" style="display: none;"></div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+    <div class="container">
+        <h1>Klasifikasi Gambar</h1>
+        <!-- <img id="iadwmagePreview" src="../../uploads/1734788440099-kepiting.jpg" alt="Preview Gambar ss" style="margin-bottom: 20px;"> -->
+        <form id="imageForm" enctype="multipart/form-data" action="/submit", method="post">
+            <!-- Preview Gambar -->
+            <% if (uploadedFileName != undefined) { %>
+                <div id="previewContainer">
+                    <img id="imagePreview" src="../../uploads/<%= uploadedFileName %>" alt="Preview Gambar" style="display: block; margin-bottom: 20px;">
                 </div>
-            </div>
-        </div>
-        <div id="loader" class="loader"></div>
-    </div>
-
-
-    <div class="container">    
-        <div id="resultsSection" class="mt-5" style="display: none;">
-            <div class="result-header"> 
-                <h5 class="header-title">Website Analysis Results</h5>              
-                <div class="export-btn-container">
-                    <button id="exportButton" class="btn-export" onclick="window.location.href='/export'">Export</button>
+            <% } else { %>    
+                <div id="previewContainer">
+                    <img id="imagePreview" alt="Preview Gambar" style="display: none; margin-bottom: 20px;">
                 </div>
+            <% } %>
+            <!-- Input Gambar -->
+            <div class="input-group">
+                <label for="imageInput" class="custom-file-label">
+                    <span id="fileName">Upload Gambar</span>
+                    <input type="file" id="imageInput" accept="image/*" name="imageInput" required>
+                </label>
             </div>
-        
-            <div id="results" class="row">
-                <% results.forEach(function(result, index) { %>  
-                <div class="col-md-6 mb-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <a href="https://<%= result.url %>" class="link-dark link-underline-opacity-0" target="_blank">
-                                        <p><%= result.url %></p>
-                                    </a>
-                                    <p class="ms-2">
-                                        <% if (result.hasPornoContent) { %>
-                                            <span class="text-danger">(Pornografi)</span>
-                                        <% } else if (result.hasNegativeContent) { %>
-                                            <span class="text-danger">(Perjudian)</span>
-                                        <% } else if (result.error) { %>
-                                            <span class="text-warning">(Error)</span>
-                                        <% } else if (result.inDB) { %>
-                                            <span class="text-success">(Ada di DB)</span>
-                                        <% } else { %>
-                                            <span class="text-success">(Normal)</span>
-                                        <% } %>
-                                    </p>
-                                </div>
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton<%= index %>" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Details
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton<%= index %>">
-                                        <% if (!result.error && !result.inDB) { %>
-                                            <% 
-                                                let hasKeywords = false;
-                                                Object.entries(result.keywordCounts).forEach(([keyword, count]) => {
-                                                    if (count > 0) {
-                                                        hasKeywords = true;
-                                                    }
-                                                });
-                                            %>
-                                            <% if (hasKeywords) { %>
-                                                <% Object.entries(result.keywordCounts).forEach(([keyword, count]) => { %>
-                                                    <% if (count > 0) { %>
-                                                        <li><%= keyword %>: <%= count %></li>
-                                                    <% } %>
-                                                <% }); %>
-                                            <% } else { %>
-                                                <li>No keyword counts available.</li>
-                                            <% } %>
-                                        <% } else { %>
-                                            <li>No keyword counts available.</li>
-                                        <% } %>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <% if (result.url != result.redirect && !result.error && !result.inDB) { %>
-                        <div class="card-body">
-                            <p class="text-danger">Redirect: <a href="https://<%= result.redirect %>" class="link-dark link-underline-opacity-0" target="_blank"><%= result.redirect %></a></p>
-                        </div>
-                        <% } %>
-                    </div>
-                </div>
-                <% }); %>  
+            <!-- Tombol -->
+            <div class="button-group">
+                <button type="reset" id="resetButton">Reset</button>
+                <button type="submit" id="classifyButton">Klasifikasi</button>
             </div>
+        </form>
+        <!-- Hasil Klasifikasi -->
+        <div id="result" style="display: none;">
+            <h4>Hasil Klasifikasi</h4>
+            <p id="classificationResult">...</p>
         </div>
     </div>
    
     <script>
-        document.getElementById('urlForm').onsubmit = function(event) {
-            event.preventDefault(); // Mencegah pengiriman form secara langsung
+        const imageInput = document.getElementById('imageInput');
+        const fileName = document.getElementById('fileName');
+        const imagePreview = document.getElementById('imagePreview');
+        const resetButton = document.getElementById('resetButton');
 
-            // Menyembunyikan tombol submit dan menampilkan loader
-            var submitButton = document.getElementById('submitButton');
-            var loadingSpinner = document.getElementById('loadingSpinner');
-            
-            submitButton.style.display = 'none';
-            loadingSpinner.style.display = 'inline-block';
+        // Menampilkan nama file dan preview gambar
+        imageInput.addEventListener('change', function () {
+            const file = this.files[0]; // Ambil file yang dipilih
+            if (file) {
+                // Menampilkan nama file
+                fileName.textContent = file.name;
 
-            // Mengirim form secara manual setelah loader ditampilkan
-            setTimeout(() => {
-                this.submit(); // Melanjutkan pengiriman form setelah beberapa saat (untuk efek)
-            }, 1000); // Anda dapat menyesuaikan waktu tunggu (ms)
-        };
-        function showResults() {
-            var resultsContainer = document.getElementById('results');
-            var resultsSection = document.getElementById('resultsSection');
-
-            
-            if (resultsContainer.children.length > 0) {
-                document.getElementById('loader').style.display = 'none';
-                resultsSection.style.display = 'block';
-            } else {
-                resultsSection.style.display = 'none';
+                // Menampilkan preview gambar
+                const reader = new FileReader(); // Membuat FileReader untuk membaca file
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result; // Menetapkan sumber gambar
+                    imagePreview.style.display = 'block'; // Menampilkan elemen <img>
+                };
+                reader.readAsDataURL(file); // Membaca file sebagai URL data
             }
-        }    
-        showResults();
+        });
+        
+        // Fungsi untuk mereset form
+        resetButton.addEventListener('click', function () {
+            imageInput.value = ''; // Mengosongkan input file
+            fileName.textContent = 'Upload Gambar'; // Mengatur ulang teks tombol
+            imagePreview.style.display = 'none'; // Menyembunyikan pratinjau gambar
+            imagePreview.src = ''; // Menghapus sumber gambar
+        });
     </script>
 
 </body>

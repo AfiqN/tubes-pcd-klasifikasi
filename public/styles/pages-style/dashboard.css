@@ -1,31 +1,174 @@
-/* Loader CSS */
-.loader {
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background-color: #000;
-    animation: l5 1s infinite linear alternate;
-    margin: 20px auto; /* Center horizontally */
-    display: inline; /* Initially hidden */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #eef2f7;
 }
 
+.container {
+    width: 100%;
+    max-width: 450px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
 
+h1 {
+    margin: 0;
+    padding: 10px 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
 
-@keyframes l5 {
-    0% {
-        box-shadow: 20px 0 #000, -20px 0 #0002;
-        background-color: #000;
+/* Gaya untuk input gambar */
+.input-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #555555;
+    display: block;
+    margin-bottom: 10px;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: border 0.3s ease;
+}
+
+input[type="file"]:focus {
+    border: 1px solid #007bff;
+    outline: none;
+}
+
+/* Gaya untuk preview gambar */
+#imagePreview {
+    width: 100%;
+    max-height: 300px;
+    border: 2px dashed #cccccc;
+    border-radius: 8px;
+    object-fit: contain;
+    display: none;
+}
+
+/* Tombol yang lebih menarik */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button#resetButton {
+    background-color: #f44336;
+    color: white;
+}
+
+button#resetButton:hover {
+    background-color: #d32f2f;
+}
+
+button#classifyButton {
+    background-color: #4CAF50;
+    color: white;
+}
+
+button#classifyButton:hover {
+    background-color: #388E3C;
+}
+
+/* Hasil klasifikasi */
+#result {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+}
+
+#result h4 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+#classificationResult {
+    font-size: 16px;
+    color: #555;
+}
+
+/* Tambahkan animasi */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
     }
-    33% {
-        box-shadow: 20px 0 #000, -20px 0 #0002;
-        background-color: #0002;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-    66% {
-        box-shadow: 20px 0 #0002, -20px 0 #000;
-        background-color: #0002;
-    }
-    100% {
-        box-shadow: 20px 0 #0002, -20px 0 #000;
-        background-color: #000;
-    }
+}
+
+.container {
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Menyembunyikan input file default */
+input[type="file"] {
+    display: none;
+}
+
+/* Gaya tombol kustom untuk input file */
+.custom-file-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555555;
+    border: 2px solid #cccccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Hover efek */
+.custom-file-label:hover {
+    background-color: #e8f0fe;
+    border-color: #007bff;
+}
+
+/* Gaya untuk nama file yang dipilih */
+#fileName {
+    color: #333;
+    font-weight: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
