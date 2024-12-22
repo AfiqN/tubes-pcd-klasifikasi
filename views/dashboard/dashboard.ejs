@@ -69,11 +69,26 @@
         });
         
         // Fungsi untuk mereset form
-        resetButton.addEventListener('click', function () {
-            imageInput.value = ''; // Mengosongkan input file
-            fileName.textContent = 'Upload Gambar'; // Mengatur ulang teks tombol
-            imagePreview.style.display = 'none'; // Menyembunyikan pratinjau gambar
-            imagePreview.src = ''; // Menghapus sumber gambar
+        resetButton.addEventListener('click', async function () {
+            event.preventDefault(); // Mencegah aksi default tombol reset
+
+            try {
+                const response = await fetch('/clear-uploads', {
+                    method: 'POST',
+                });
+
+                if (response.ok) {
+                    // Reset form dan pratinjau gambar
+                    imageInput.value = ''; 
+                    fileName.textContent = 'Upload Gambar'; 
+                    imagePreview.style.display = 'none'; 
+                    imagePreview.src = ''; 
+                } else {
+                    console.error('Gagal menghapus file di server.');
+                }
+            } catch (error) {
+                console.error('Error saat menghapus file:', error);
+            }
         });
     </script>
 

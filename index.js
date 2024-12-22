@@ -62,3 +62,7 @@ const port = process.env.PORT || 8000;
 app.listen(port, () => {
     console.log(`Listening on http://localhost:${port}`);
 });
+
+
+// Serve model files statically
+app.use('/model', express.static(path.join(__dirname, 'model')));

@@ -12,4 +12,6 @@ router.route('/dashboard')
 router.route('/submit')
     .post(upload.single('imageInput'), dashboard.processForm);
 
+router.post('/clear-uploads', dashboard.clearUploads);
+
 module.exports = router;
