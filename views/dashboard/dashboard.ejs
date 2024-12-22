@@ -8,90 +8,55 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="/styles/custom.css">
     <link rel="stylesheet" href="/styles/pages-style/dashboard.css">
-   
+    <script src="/script/dashboard.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Klasifikasi Gambar</h1>
-        <!-- <img id="iadwmagePreview" src="../../uploads/1734788440099-kepiting.jpg" alt="Preview Gambar ss" style="margin-bottom: 20px;"> -->
-        <form id="imageForm" enctype="multipart/form-data" action="/submit", method="post">
+        <form id="imageForm" enctype="multipart/form-data" action="/submit" method="post">
             <!-- Preview Gambar -->
-            <% if (uploadedFileName != undefined) { %>
+            <% if (uploadedFileName) { %>
                 <div id="previewContainer">
-                    <img id="imagePreview" src="../../uploads/<%= uploadedFileName %>" alt="Preview Gambar" style="display: block; margin-bottom: 20px;">
+                    <img id="imagePreview" src="/uploads/<%= uploadedFileName %>" alt="Preview Gambar" style="display: block; margin-bottom: 20px;">
                 </div>
-            <% } else { %>    
+            <% } else { %>
                 <div id="previewContainer">
                     <img id="imagePreview" alt="Preview Gambar" style="display: none; margin-bottom: 20px;">
                 </div>
             <% } %>
+    
             <!-- Input Gambar -->
             <div class="input-group">
                 <label for="imageInput" class="custom-file-label">
-                    <span id="fileName">Upload Gambar</span>
-                    <input type="file" id="imageInput" accept="image/*" name="imageInput" required>
+                    <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                    <div class="file-input-container">
+                        <span id="fileName">Drag & drop gambar di sini atau klik untuk memilih</span>
+                        <input type="file" id="imageInput" accept="image/*" name="imageInput" required>
+                    </div>
                 </label>
             </div>
+    
             <!-- Tombol -->
             <div class="button-group">
                 <button type="reset" id="resetButton">Reset</button>
                 <button type="submit" id="classifyButton">Klasifikasi</button>
             </div>
         </form>
+    
         <!-- Hasil Klasifikasi -->
-        <div id="result" style="display: none;">
-            <h4>Hasil Klasifikasi</h4>
-            <p id="classificationResult">...</p>
-        </div>
+        <% if (classificationResult) { %>
+            <div id="result">
+                <h4>Hasil Klasifikasi</h4>
+                <div id="classificationResult">
+                    <p>
+                        <strong>Jenis Penyakit:</strong> 
+                        Apple Cedar Apple Rust
+                        <span class="confidence-score">Confidence: 100%</span>
+                    </p>
+                </div>
+            </div>
+        <% } %>
     </div>
-   
-    <script>
-        const imageInput = document.getElementById('imageInput');
-        const fileName = document.getElementById('fileName');
-        const imagePreview = document.getElementById('imagePreview');
-        const resetButton = document.getElementById('resetButton');
-
-        // Menampilkan nama file dan preview gambar
-        imageInput.addEventListener('change', function () {
-            const file = this.files[0]; // Ambil file yang dipilih
-            if (file) {
-                // Menampilkan nama file
-                fileName.textContent = file.name;
-
-                // Menampilkan preview gambar
-                const reader = new FileReader(); // Membuat FileReader untuk membaca file
-                reader.onload = function (e) {
-                    imagePreview.src = e.target.result; // Menetapkan sumber gambar
-                    imagePreview.style.display = 'block'; // Menampilkan elemen <img>
-                };
-                reader.readAsDataURL(file); // Membaca file sebagai URL data
-            }
-        });
-        
-        // Fungsi untuk mereset form
-        resetButton.addEventListener('click', async function () {
-            event.preventDefault(); // Mencegah aksi default tombol reset
-
-            try {
-                const response = await fetch('/clear-uploads', {
-                    method: 'POST',
-                });
-
-                if (response.ok) {
-                    // Reset form dan pratinjau gambar
-                    imageInput.value = ''; 
-                    fileName.textContent = 'Upload Gambar'; 
-                    imagePreview.style.display = 'none'; 
-                    imagePreview.src = ''; 
-                } else {
-                    console.error('Gagal menghapus file di server.');
-                }
-            } catch (error) {
-                console.error('Error saat menghapus file:', error);
-            }
-        });
-    </script>
-
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXg" crossorigin="anonymous"></script>

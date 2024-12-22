@@ -1,174 +1,186 @@
+/* Reset dan style dasar */
 body {
+    background-color: #f8f9fa;
+    font-family: 'Inter', sans-serif;
+    color: #2d3436;
+    padding: 2rem 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Header styling */
+h1 {
+    font-size: 2.2rem;
+    color: #2d3436;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* Preview container styling */
+/* Kontainer preview */
+#previewContainer {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 2rem;
+    text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    background-color: #eef2f7;
+    border-radius: 15px; /* Membuat border menjadi lebih bulat */
+    padding: 10px; /* Memberikan ruang di sekitar gambar */
+    box-sizing: border-box;
 }
 
-.container {
-    width: 100%;
-    max-width: 450px;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-h1 {
-    margin: 0;
-    padding: 10px 0;
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-}
-
-/* Gaya untuk input gambar */
-.input-group {
-    margin-bottom: 25px;
-    text-align: left;
-}
-
-label {
-    font-size: 14px;
-    font-weight: bold;
-    color: #555555;
+/* Gambar di dalam kontainer preview */
+#previewContainer img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+    border: 2px dashed #007BFF; /* Border putus-putus dengan warna biru */
     display: block;
-    margin-bottom: 10px;
+    border-radius: 25px; /* Membuat gambar mengikuti bentuk bulat kontainer */
 }
 
-input[type="file"] {
+/* Upload area styling */
+.input-group {
     width: 100%;
-    padding: 12px;
-    font-size: 14px;
-    border: 1px solid #cccccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    transition: border 0.3s ease;
+    margin-bottom: 2rem;
 }
 
-input[type="file"]:focus {
-    border: 1px solid #007bff;
-    outline: none;
-}
-
-/* Gaya untuk preview gambar */
-#imagePreview {
+.custom-file-label {
+    background-color: #f8f9fa;
+    border: 2px dashed #0984e3;
+    border-radius: 12px;
+    padding: 2rem;
     width: 100%;
-    max-height: 300px;
-    border: 2px dashed #cccccc;
-    border-radius: 8px;
-    object-fit: contain;
-    display: none;
-}
-
-/* Tombol yang lebih menarik */
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 30px;
-}
-
-button {
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: bold;
-    border: none;
-    border-radius: 8px;
+    max-width: 400px;
+    margin: 0 auto;
+    display: block;
     cursor: pointer;
+    text-align: center;
     transition: all 0.3s ease;
 }
 
-button#resetButton {
-    background-color: #f44336;
-    color: white;
+.custom-file-label:hover {
+    background-color: #e8f4fd;
+    border-color: #0070c9;
 }
 
-button#resetButton:hover {
-    background-color: #d32f2f;
+.custom-file-label i {
+    color: #0984e3;
+    margin-bottom: 0.5rem;
 }
 
-button#classifyButton {
-    background-color: #4CAF50;
-    color: white;
+.custom-file-label p {
+    color: #636e72;
+    font-size: 1rem;
+    margin: 0;
 }
 
-button#classifyButton:hover {
-    background-color: #388E3C;
-}
-
-/* Hasil klasifikasi */
-#result {
-    margin-top: 30px;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: #f1f1f1;
-    border: 1px solid #ddd;
-}
-
-#result h4 {
-    font-size: 18px;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-#classificationResult {
-    font-size: 16px;
-    color: #555;
-}
-
-/* Tambahkan animasi */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.container {
-    animation: fadeIn 0.8s ease-in-out;
-}
-
-/* Menyembunyikan input file default */
 input[type="file"] {
     display: none;
 }
 
-/* Gaya tombol kustom untuk input file */
-.custom-file-label {
-    display: inline-flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 10px 15px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #555555;
-    border: 2px solid #cccccc;
+/* Button styling */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem 0 2rem;
+}
+
+button {
+    padding: 0.8rem 2rem;
+    border: none;
     border-radius: 8px;
-    background-color: #f9f9f9;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    transition: all 0.3s ease;
+    min-width: 120px;
 }
 
-/* Hover efek */
-.custom-file-label:hover {
-    background-color: #e8f0fe;
-    border-color: #007bff;
+#resetButton {
+    background-color: #ff7675;
+    color: white;
 }
 
-/* Gaya untuk nama file yang dipilih */
-#fileName {
-    color: #333;
-    font-weight: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+#resetButton:hover {
+    background-color: #d63031;
+}
+
+#classifyButton {
+    background-color: #0984e3;
+    color: white;
+}
+
+#classifyButton:hover {
+    background-color: #0070c9;
+}
+
+/* Result section styling */
+#result {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+#result h4 {
+    color: #2d3436;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+#classificationResult {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin: 0;
+    font-size: 1.1rem;
+    color: #2d3436;
+    line-height: 1.5;
+}
+
+/* Confidence score styling */
+.confidence-score {
+    display: inline-block;
+    background-color: #00b894;
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .button-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    button {
+        width: 100%;
+    }
 }
