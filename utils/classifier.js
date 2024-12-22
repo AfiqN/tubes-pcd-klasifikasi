@@ -2,6 +2,7 @@ const tf = require('@tensorflow/tfjs');
 const path = require('path');
 const fs = require('fs');
 const jpeg = require('jpeg-js');
+const PNG = require('pngjs').PNG;
 
 /**
  * Custom IOHandler untuk memuat GraphModel dari file sistem
@@ -69,18 +70,35 @@ const loadModel = async () => {
 /**
  * Fungsi pembantu untuk membaca file JPG
  */
-function decodeJpegToTensor(filePath) {
-  const jpegData = fs.readFileSync(filePath);
-  const { width, height, data } = jpeg.decode(jpegData, { useTArray: true });
+function decodeImageToTensor(filePath) {
+  const imageData = fs.readFileSync(filePath);
+  const fileExtension = path.extname(filePath).toLowerCase();
+  
+  let width, height, data;
+
+  if (fileExtension === '.jpg' || fileExtension === '.jpeg') {
+    // Decode JPEG
+    const jpegData = jpeg.decode(imageData, { useTArray: true });
+    width = jpegData.width;
+    height = jpegData.height;
+    data = jpegData.data;
+  } 
+  else if (fileExtension === '.png') {
+    // Decode PNG
+    const png = PNG.sync.read(imageData);
+    width = png.width;
+    height = png.height;
+    data = new Uint8Array(png.data);
+  } 
+  else {
+    throw new Error('Format gambar tidak didukung. Gunakan JPEG atau PNG.');
+  }
 
   // Buat tensor [height, width, 4]
   let imgTensor = tf.tensor3d(data, [height, width, 4], 'int32');
 
   // Hilangkan channel alpha (A), ambil hanya RGB => [height, width, 3]
   imgTensor = tf.slice(imgTensor, [0, 0, 0], [-1, -1, 3]);
-
-  // Convert ke float32, normalisasi ke [0..1]
-  imgTensor = imgTensor.toFloat().div(tf.scalar(255.0));
 
   // Resize jadi [224, 224]
   imgTensor = tf.image.resizeBilinear(imgTensor, [224, 224]);
@@ -96,7 +114,7 @@ const classifyImage = async (imagePath) => {
 
   let inputTensor;
   try {
-    inputTensor = decodeJpegToTensor(imagePath);
+    inputTensor = decodeImageToTensor(imagePath);  // Gunakan fungsi baru
     const prediction = await model.predict(inputTensor);
     const predictionArray = await prediction.data();
     
