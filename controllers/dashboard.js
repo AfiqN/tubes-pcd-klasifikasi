@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const { loadModel, classifyImage } = require('../utils/classifier');
+const sharp = require('sharp');
 
 // Daftar kelas sesuai dengan label yang diberikan
 const classes = [
@@ -66,23 +67,29 @@ module.exports.processForm = async (req, res) => {
     }
 
     try {
-        // Path ke file gambar yang diunggah
         const imagePath = path.join(__dirname, '..', 'uploads', uploadedFile.filename);
-
-        // Panggil fungsi klasifikasi
         const result = await classifyImage(imagePath);
-        
-        // Ambil label berdasarkan classIndex
         const label = classes[result.classIndex].replace(/_+/g, " ").trim();
         const confidence = result.confidence.toFixed(2) * 100;
-        // console.log(uploadedFile);
 
-        // Simpan hasil ke session
+        // Baca gambar dengan sharp dan hitung histogram
+        const imageBuffer = fs.readFileSync(imagePath);
+        const { data, info } = await sharp(imageBuffer)
+            .raw()
+            .toBuffer({ resolveWithObject: true });
+
+        const histogram = { red: Array(256).fill(0), green: Array(256).fill(0), blue: Array(256).fill(0) };
+
+        for (let i = 0; i < data.length; i += 3) {
+            histogram.red[data[i]]++;
+            histogram.green[data[i + 1]]++;
+            histogram.blue[data[i + 2]]++;
+        }
+
         req.session.originalFileName = uploadedFile.originalname;
         req.session.uploadedFileName = uploadedFile.filename;
         req.session.classificationResult = [label, confidence];
-        // req.session.classificationResult = result ;
-        // console.log(uploadedFile.originalname);
+        req.session.colorHistogram = histogram;
 
         res.redirect('/dashboard');
     } catch (error) {
@@ -92,15 +99,16 @@ module.exports.processForm = async (req, res) => {
 };
 
 module.exports.renderResult = async (req, res) => {
-    // Ambil uploadedFileName & classificationResult dari session
     const originalFileName = req.session.originalFileName;
     const uploadedFileName = req.session.uploadedFileName;
     const classificationResult = req.session.classificationResult;
+    const colorHistogram = req.session.colorHistogram;
 
     res.render('dashboard/dashboard', {
         originalFileName,
         uploadedFileName,
         classificationResult,
+        colorHistogram,
     });
 };
 
