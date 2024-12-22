@@ -53,6 +53,7 @@ module.exports.processForm = async (req, res) => {
         // Simpan hasil ke session
         req.session.uploadedFileName = uploadedFile.filename;
         req.session.classificationResult = `Klasifikasi: ${label} (Confidence: ${confidence})`;
+        // req.session.classificationResult = result ;
 
         res.redirect('/dashboard');
     } catch (error) {

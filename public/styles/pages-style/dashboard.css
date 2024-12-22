@@ -153,6 +153,24 @@ button {
     line-height: 1.5;
 }
 
+/* Sembunyikan elemen input saat ada gambar yang dipreview */
+.input-group.hidden {
+    display: none;
+}
+
+/* Tampilan nama file yang ringkas */
+#filePreview {
+    display: none;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+}
+#filePreview.active {
+    display: block;
+}
+
+
 /* Confidence score styling */
 .confidence-score {
     display: inline-block;
