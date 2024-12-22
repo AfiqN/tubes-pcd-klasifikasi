@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const jpeg = require('jpeg-js');
 const PNG = require('pngjs').PNG;
+const sharp = require('sharp');
 
 /**
  * Custom IOHandler untuk memuat GraphModel dari file sistem
@@ -134,6 +135,8 @@ const classifyImage = async (imagePath) => {
     }
   }
 };
+
+
 
 module.exports = {
   loadModel,

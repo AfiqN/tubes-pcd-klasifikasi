@@ -60,6 +60,39 @@ module.exports.clearSession = async (req, res) => {
     // res.redirect('/dashboard');
 };
 
+const applyMorphology = async (imageBuffer, operation, kernelSize = 3) => {
+    const image = await sharp(imageBuffer).raw().toBuffer({ resolveWithObject: true });
+    const width = image.info.width;
+    const height = image.info.height;
+    const data = image.data;
+
+    const output = new Uint8Array(data.length);
+
+    const applyKernel = (x, y, kernel) => {
+        const values = [];
+        for (let ky = -1; ky <= 1; ky++) {
+            for (let kx = -1; kx <= 1; kx++) {
+                const px = Math.min(Math.max(x + kx, 0), width - 1);
+                const py = Math.min(Math.max(y + ky, 0), height - 1);
+                values.push(data[py * width + px]);
+            }
+        }
+        if (operation === 'erode') return Math.min(...values);
+        if (operation === 'dilate') return Math.max(...values);
+        if (operation === 'open') return Math.min(...values); // Opening is erosion followed by dilation
+        if (operation === 'close') return Math.max(...values); // Closing is dilation followed by erosion
+        return 0;
+    };
+
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            output[y * width + x] = applyKernel(x, y, operation);
+        }
+    }
+
+    return sharp(Buffer.from(output), { raw: { width, height, channels: 1 } }).toBuffer();
+};
+
 module.exports.processForm = async (req, res) => {
     const uploadedFile = req.file;
     if (!uploadedFile) {
@@ -68,28 +101,99 @@ module.exports.processForm = async (req, res) => {
 
     try {
         const imagePath = path.join(__dirname, '..', 'uploads', uploadedFile.filename);
+        const imageBuffer = fs.readFileSync(imagePath);
+
+        // Fungsi untuk menghitung histogram warna
+        const calculateHistogram = async (imageBuffer) => {
+            const { data, info } = await sharp(imageBuffer)
+                .raw()
+                .toBuffer({ resolveWithObject: true });
+
+            const histogram = { red: Array(256).fill(0), green: Array(256).fill(0), blue: Array(256).fill(0) };
+
+            for (let i = 0; i < data.length; i += 3) {
+                histogram.red[data[i]]++;
+                histogram.green[data[i + 1]]++;
+                histogram.blue[data[i + 2]]++;
+            }
+
+            return histogram;
+        };
+
+        // Fungsi untuk konversi ke grayscale
+        const convertToGrayscale = async (imageBuffer) => {
+            return await sharp(imageBuffer)
+                .grayscale()
+                .raw()
+                .toBuffer({ resolveWithObject: true });
+        };
+
+        // Fungsi untuk operasi morfologi
+        const applyMorphology = async (imageBuffer, operation, kernelSize = 3) => {
+            const { data, info } = imageBuffer;
+            const width = info.width;
+            const height = info.height;
+            const output = new Uint8Array(data.length);
+
+            const applyKernel = (x, y, kernel) => {
+                const values = [];
+                for (let ky = -1; ky <= 1; ky++) {
+                    for (let kx = -1; kx <= 1; kx++) {
+                        const px = Math.min(Math.max(x + kx, 0), width - 1);
+                        const py = Math.min(Math.max(y + ky, 0), height - 1);
+                        values.push(data[py * width + px]);
+                    }
+                }
+                if (operation === 'erode') return Math.min(...values);  // Erosi
+                if (operation === 'dilate') return Math.max(...values); // Dilasi
+                return 0; // Default jika tidak ada operasi
+            };
+
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    output[y * width + x] = applyKernel(x, y, operation);
+                }
+            }
+
+            return {
+                data: output,
+                info: { width, height, channels: 1 },
+            };
+        };
+
+        // Hitung histogram warna asli sebelum konversi grayscale
+        const colorHistogram = await calculateHistogram(imageBuffer);
+
+        // Konversi gambar ke grayscale
+        const grayscaleImage = await convertToGrayscale(imageBuffer);
+
+        // Dapatkan jenis operasi morfologi dari form
+        const morphologyType = req.body.morphologyType;
+
+        // Proses gambar berdasarkan operasi morfologi jika dipilih
+        let processedBuffer = grayscaleImage;
+        if (morphologyType) {
+            processedBuffer = await applyMorphology(grayscaleImage, morphologyType);
+        }
+
+        // Simpan hasil gambar setelah proses morfologi
+        const processedPath = path.join(__dirname, '..', 'uploads', `processed_${uploadedFile.filename}`);
+        await sharp(Buffer.from(processedBuffer.data), {
+            raw: { width: processedBuffer.info.width, height: processedBuffer.info.height, channels: 1 },
+        })
+            .toFormat('png')
+            .toFile(processedPath);
+
+        // Klasifikasi gambar
         const result = await classifyImage(imagePath);
         const label = classes[result.classIndex].replace(/_+/g, " ").trim();
         const confidence = result.confidence.toFixed(2) * 100;
 
-        // Baca gambar dengan sharp dan hitung histogram
-        const imageBuffer = fs.readFileSync(imagePath);
-        const { data, info } = await sharp(imageBuffer)
-            .raw()
-            .toBuffer({ resolveWithObject: true });
-
-        const histogram = { red: Array(256).fill(0), green: Array(256).fill(0), blue: Array(256).fill(0) };
-
-        for (let i = 0; i < data.length; i += 3) {
-            histogram.red[data[i]]++;
-            histogram.green[data[i + 1]]++;
-            histogram.blue[data[i + 2]]++;
-        }
-
         req.session.originalFileName = uploadedFile.originalname;
         req.session.uploadedFileName = uploadedFile.filename;
+        req.session.processedImage = `processed_${uploadedFile.filename}`;
         req.session.classificationResult = [label, confidence];
-        req.session.colorHistogram = histogram;
+        req.session.colorHistogram = colorHistogram;
 
         res.redirect('/dashboard');
     } catch (error) {
@@ -98,17 +202,20 @@ module.exports.processForm = async (req, res) => {
     }
 };
 
+
 module.exports.renderResult = async (req, res) => {
     const originalFileName = req.session.originalFileName;
     const uploadedFileName = req.session.uploadedFileName;
     const classificationResult = req.session.classificationResult;
     const colorHistogram = req.session.colorHistogram;
+    const processedImage = req.session.processedImage;
 
     res.render('dashboard/dashboard', {
         originalFileName,
         uploadedFileName,
         classificationResult,
         colorHistogram,
+        processedImage
     });
 };
 

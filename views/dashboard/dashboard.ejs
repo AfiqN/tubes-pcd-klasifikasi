@@ -111,7 +111,26 @@
                     });
                 </script>
             </div>
+            <!-- Dropdown untuk Operasi Morfologi -->
+        <div class="form-group">
+            <label for="morphologyType">Operasi Morfologi</label>
+            <select id="morphologyType" name="morphologyType" class="form-select">
+                <option value="erode">Erosi</option>
+                <option value="dilate">Dilasi</option>
+                <option value="open">Opening</option>
+                <option value="close">Closing</option>
+            </select>
+        </div>
+
+    <!-- Hasil Morfologi -->
+    <% if (processedImage) { %>
+        <div id="processedPreview">
+            <h4>Hasil Operasi Morfologi</h4>
+            <img src="/uploads/<%= processedImage %>" alt="Hasil Morfologi">
+        </div>
+    <% } %>
         <% } %>
+        
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
