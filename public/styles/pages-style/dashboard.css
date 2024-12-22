@@ -24,6 +24,13 @@ h1 {
     font-weight: 600;
 }
 
+.original-file-name {
+    text-align: center;
+    /* background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 1rem; */
+}
+
 /* Preview container styling */
 /* Kontainer preview */
 #previewContainer {

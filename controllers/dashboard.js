@@ -34,6 +34,15 @@ module.exports.landingPage = async (req, res) => {
 
 module.exports.clearSession = async (req, res) => {
     try {
+
+        const uploadDir = path.join(__dirname, '..', 'uploads');
+
+        // Hapus semua file dalam folder uploads
+        const files = fs.readdirSync(uploadDir);
+        files.forEach((file) => {
+            fs.unlinkSync(path.join(uploadDir, file));
+        });
+        
         // Hapus semua data dari session
         req.session.destroy((err) => {
             if (err) {
