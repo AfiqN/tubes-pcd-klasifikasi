@@ -14,4 +14,6 @@ router.route('/submit')
 
 router.post('/clear-uploads', dashboard.clearUploads);
 
+router.post('/clear-session', dashboard.clearSession);
+
 module.exports = router;

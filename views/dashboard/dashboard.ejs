@@ -26,7 +26,11 @@
             <% } %>
     
             <!-- Input Gambar -->
+            <% if (originalFileName == undefined) { %>
             <div class="input-group">
+            <% } else { %>   
+            <div class="input-group" style="display:none">
+            <% } %>
                 <label for="imageInput" class="custom-file-label">
                     <i class="fas fa-cloud-upload-alt fa-2x"></i>
                     <div class="file-input-container">
@@ -35,9 +39,6 @@
                     </div>
                 </label>
             </div>
-
-            <!-- Elemen untuk menampilkan nama file -->
-            <div id="filePreview"></div>
     
             <!-- Tombol -->
             <div class="button-group">
@@ -53,8 +54,8 @@
                 <div id="classificationResult">
                     <p>
                         <strong>Jenis Penyakit:</strong> 
-                        Apple Cedar Apple Rust
-                        <span class="confidence-score">Confidence: 100%</span>
+                        <%= classificationResult[0] %>
+                        <span class="confidence-score">Confidence: <%= classificationResult[1] %>%</span>
                     </p>
                 </div>
             </div>

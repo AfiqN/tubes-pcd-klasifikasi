@@ -1,3 +1,5 @@
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const imageInput = document.getElementById('imageInput');
     const fileName = document.getElementById('fileName');
@@ -56,29 +58,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fungsi reset yang diperbarui
     resetButton.addEventListener('click', async function(event) {
         event.preventDefault();
-
+    
         try {
-            const response = await fetch('/clear-uploads', {
+            // Panggil endpoint untuk menghapus session
+            const response = await fetch('/clear-session', {
                 method: 'POST',
             });
-
+    
             if (response.ok) {
-                // Reset form dan preview
-                imageInput.value = '';
-                fileName.textContent = 'Upload Gambar';
-                imagePreview.style.display = 'none';
-                imagePreview.src = '';
-                form.classList.remove('preview-active');
-                
-                // Menghapus hasil klasifikasi
-                if (resultDiv) {
-                    resultDiv.remove();
-                }
+                // Reload halaman setelah session dihapus
+                window.location.reload();
             } else {
-                console.error('Gagal menghapus file di server.');
+                console.error('Gagal menghapus session di server.');
             }
         } catch (error) {
-            console.error('Error saat menghapus file:', error);
+            console.error('Error saat menghapus session:', error);
         }
     });
 });

@@ -32,6 +32,24 @@ module.exports.landingPage = async (req, res) => {
     res.redirect('/dashboard');
 };
 
+module.exports.clearSession = async (req, res) => {
+    try {
+        // Hapus semua data dari session
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Gagal menghapus session:', err);
+                return res.status(500).send({ message: 'Gagal menghapus session.' });
+            }
+            res.status(200).send({ message: 'Session berhasil dihapus.' });
+        });
+    } catch (error) {
+        console.error('Error saat menghapus session:', error);
+        res.status(500).send({ message: 'Gagal menghapus session.' });
+    }
+
+    // res.redirect('/dashboard');
+};
+
 module.exports.processForm = async (req, res) => {
     const uploadedFile = req.file;
     if (!uploadedFile) {
@@ -46,14 +64,16 @@ module.exports.processForm = async (req, res) => {
         const result = await classifyImage(imagePath);
         
         // Ambil label berdasarkan classIndex
-        const label = classes[result.classIndex];
-        const confidence = result.confidence.toFixed(2);
-        console.log(label);
+        const label = classes[result.classIndex].replace(/_+/g, " ").trim();
+        const confidence = result.confidence.toFixed(2) * 100;
+        // console.log(uploadedFile);
 
         // Simpan hasil ke session
+        req.session.originalFileName = uploadedFile.originalname;
         req.session.uploadedFileName = uploadedFile.filename;
-        req.session.classificationResult = `Klasifikasi: ${label} (Confidence: ${confidence})`;
+        req.session.classificationResult = [label, confidence];
         // req.session.classificationResult = result ;
+        // console.log(uploadedFile.originalname);
 
         res.redirect('/dashboard');
     } catch (error) {
@@ -64,10 +84,12 @@ module.exports.processForm = async (req, res) => {
 
 module.exports.renderResult = async (req, res) => {
     // Ambil uploadedFileName & classificationResult dari session
+    const originalFileName = req.session.originalFileName;
     const uploadedFileName = req.session.uploadedFileName;
     const classificationResult = req.session.classificationResult;
 
     res.render('dashboard/dashboard', {
+        originalFileName,
         uploadedFileName,
         classificationResult,
     });
