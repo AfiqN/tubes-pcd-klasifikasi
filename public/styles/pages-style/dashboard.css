@@ -31,6 +31,54 @@ h1 {
     padding: 1rem; */
 }
 
+.card {
+    height: 100%;
+}
+
+.card-body {
+    height: 80%;
+}
+
+.col {
+    justify-items: center;
+}
+
+#morphological-operations .card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+#morphological-operations .card:hover {
+    transform: translateY(-5px);
+}
+
+#morphological-operations .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+#morphological-operations .card-body {
+    padding: 1rem;
+    text-align: center;
+}
+
+#morphological-operations .card-title {
+    margin-bottom: 0;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.col-md-4 {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+
 /* Preview container styling */
 /* Kontainer preview */
 #previewContainer {

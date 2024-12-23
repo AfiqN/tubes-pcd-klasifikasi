@@ -57,22 +57,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fungsi reset yang diperbarui
     resetButton.addEventListener('click', async function(event) {
-        event.preventDefault();
-    
-        try {
-            // Panggil endpoint untuk menghapus session
-            const response = await fetch('/clear-session', {
-                method: 'POST',
-            });
-    
-            if (response.ok) {
-                // Reload halaman setelah session dihapus
-                window.location.reload();
-            } else {
-                console.error('Gagal menghapus session di server.');
-            }
-        } catch (error) {
-            console.error('Error saat menghapus session:', error);
+    event.preventDefault();
+
+    try {
+        // Panggil endpoint untuk menghapus session
+        const response = await fetch('/clear-session', {
+            method: 'POST',
+        });
+
+        if (response.ok) {
+            // Reload halaman setelah session dihapus
+            window.location.reload();
+        } else {
+            console.error('Gagal menghapus session di server.');
         }
-    });
+    } catch (error) {
+        console.error('Error saat menghapus session:', error);
+    }
+});
 });
