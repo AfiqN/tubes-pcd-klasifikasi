@@ -113,93 +113,24 @@
             </div>
         <% } %>
         <!-- Tambahkan section ini setelah bagian histogram -->
-        <% if (results) { %>
+        <% if (results.operations && results.operations.length > 0) { %>
             <div id="morphological-operations">
                 <h4>Hasil Operasi Morfologi</h4>
                 <div class="row row-cols-1 row-cols-md-3 g-4">
-                    <!-- Original Image -->
-                    <div class="col">
-                        <div class="card">
-                            <img src="/uploads/<%= uploadedFileName %>" class="card-img-top" alt="Original Image">
-                            <div class="card-body">
-                                <h5 class="card-title">Gambar Asli</h5>
+                    <% results.operations.forEach(operation => { %>
+                        <% if (operation.imagePath) { %>
+                        <div class="col">
+                            <div class="card">
+                                <img src="/uploads/<%= operation.imagePath %>" class="card-img-top" alt="<%= operation.label %>">
+                                <div class="card-body">
+                                    <h5 class="card-title"><%= operation.label %></h5>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Grayscale Image -->
-                    <% if (results.grayscale) { %>
-                    <div class="col">
-                        <div class="card">
-                            <img src="/uploads/<%= results.grayscale %>" class="card-img-top" alt="Grayscale">
-                            <div class="card-body">
-                                <h5 class="card-title">Grayscale</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <% } %>
-            
-                    <!-- Dilation Result -->
-                    <% if (results.dilate) { %>
-                    <div class="col">
-                        <div class="card">
-                            <img src="/uploads/<%= results.dilate %>" class="card-img-top" alt="Dilation">
-                            <div class="card-body">
-                                <h5 class="card-title">Dilasi</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <% } %>
-            
-                    <!-- Erosion Result -->
-                    <% if (results.erode) { %>
-                    <div class="col">
-                        <div class="card">
-                            <img src="/uploads/<%= results.erode %>" class="card-img-top" alt="Erosion">
-                            <div class="card-body">
-                                <h5 class="card-title">Erosi</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <% } %>
-            
-                    <!-- Opening Result -->
-                    <% if (results.open) { %>
-                    <div class="col">
-                        <div class="card">
-                            <img src="/uploads/<%= results.open %>" class="card-img-top" alt="Opening">
-                            <div class="card-body">
-                                <h5 class="card-title">Opening</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <% } %>
-            
-                    <!-- Closing Result -->
-                    <% if (results.close) { %>
-                    <div class="col">
-                        <div class="card">
-                            <img src="/uploads/<%= results.close %>" class="card-img-top" alt="Closing">
-                            <div class="card-body">
-                                <h5 class="card-title">Closing</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <% } %>
-            
-                    <!-- Hit-or-Miss Result -->
-                    <% if (results.hitormiss) { %>
-                    <div class="col">
-                        <div class="card">
-                            <img src="/uploads/<%= results.hitormiss %>" class="card-img-top" alt="Hit-or-Miss">
-                            <div class="card-body">
-                                <h5 class="card-title">Hit-or-Miss</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <% } %>
+                        <% } %>
+                    <% }); %>
                 </div>
-            </div>            
+            </div>
         <% } %>
 
         

@@ -121,19 +121,27 @@ module.exports.processForm = async (req, res) => {
 
         // Apply morphological operations
         try {
-            const [dilatePath, erodePath, openPath, closePath, hitormiss] = await Promise.all([
+            const [dilatePath, erodePath, openPath, closePath, hitormissPath, 
+                removebgPath, hsvPath, hsiPath] = await Promise.all([
                 applyMorphology(imagePath, 'dilate'),
                 applyMorphology(imagePath, 'erode'),
                 applyMorphology(imagePath, 'open'),
                 applyMorphology(imagePath, 'close'),
-                applyMorphology(imagePath, 'hitormiss')
+                applyMorphology(imagePath, 'hitormiss'),
+                applyMorphology(imagePath, 'removebg'),
+                applyMorphology(imagePath, 'hsv'),
+                applyMorphology(imagePath, 'hsi')
             ]);
 
             results.dilate = path.basename(dilatePath);
             results.erode = path.basename(erodePath);
             results.open = path.basename(openPath);
             results.close = path.basename(closePath);
-            results.hitormiss = path.basename(hitormiss);
+            results.hitormiss = path.basename(hitormissPath);
+            results.removebg = path.basename(removebgPath);
+            results.hsv = path.basename(hsvPath);
+            results.hsi = path.basename(hsiPath);
+
         } catch (morphologyError) {
             console.error('Error in morphological operations:', morphologyError);
             return res.status(500).send('Gagal dalam operasi morfologi');
@@ -144,7 +152,17 @@ module.exports.processForm = async (req, res) => {
         const label = classes[result.classIndex].replace(/_+/g, " ").trim();
         const confidence = result.confidence.toFixed(2) * 100;
 
-
+        results.operations = [
+            { label: 'Grayscale', imagePath: results.grayscale },
+            { label: 'Dilasi', imagePath: results.dilate },
+            { label: 'Erosi', imagePath: results.erode },
+            { label: 'Opening', imagePath: results.open },
+            { label: 'Closing', imagePath: results.close },
+            { label: 'Hit-or-Miss', imagePath: results.hitormiss },
+            { label: 'Remove Background', imagePath: results.removebg },
+            { label: 'HSV', imagePath: results.hsv },
+            { label: 'HSI', imagePath: results.hsi },
+        ];
 
         req.session.originalFileName = uploadedFile.originalname;
         req.session.uploadedFileName = uploadedFile.filename;
@@ -162,22 +180,62 @@ module.exports.processForm = async (req, res) => {
 
 
 module.exports.renderResult = async (req, res) => {
-    const originalFileName = req.session.originalFileName;
-    const uploadedFileName = req.session.uploadedFileName;
-    const classificationResult = req.session.classificationResult;
-    const colorHistogram = req.session.colorHistogram;
-    const processedImage = req.session.processedImage;
-    const results = req.session.results;
+    try {
+        const originalFileName = req.session.originalFileName;
+        const uploadedFileName = req.session.uploadedFileName;
+        const classificationResult = req.session.classificationResult;
+        const colorHistogram = req.session.colorHistogram;
+        const processedImage = req.session.processedImage;
+        const results = req.session.results || {}; // Berikan nilai default kosong
 
-    res.render('dashboard/dashboard', {
-        originalFileName,
-        uploadedFileName,
-        classificationResult,
-        colorHistogram,
-        processedImage,
-        results,
-    });
+        // Inisialisasi operations jika belum ada
+        if (results && !results.operations) {
+            results.operations = [];
+            
+            // Tambahkan operasi yang ada ke array
+            if (results.grayscale) {
+                results.operations.push({ label: 'Grayscale', imagePath: results.grayscale });
+            }
+            if (results.dilate) {
+                results.operations.push({ label: 'Dilasi', imagePath: results.dilate });
+            }
+            if (results.erode) {
+                results.operations.push({ label: 'Erosi', imagePath: results.erode });
+            }
+            if (results.open) {
+                results.operations.push({ label: 'Opening', imagePath: results.open });
+            }
+            if (results.close) {
+                results.operations.push({ label: 'Closing', imagePath: results.close });
+            }
+            if (results.hitormiss) {
+                results.operations.push({ label: 'Hit-or-Miss', imagePath: results.hitormiss });
+            }
+            if (results.removebg) {
+                results.operations.push({ label: 'Remove Background', imagePath: results.removebg });
+            }
+            if (results.hsv) {
+                results.operations.push({ label: 'HSV', imagePath: results.hsv });
+            }
+            if (results.hsi) {
+                results.operations.push({ label: 'HSI', imagePath: results.hsi });
+            }
+        }
+
+        res.render('dashboard/dashboard', {
+            originalFileName,
+            uploadedFileName,
+            classificationResult,
+            colorHistogram,
+            processedImage,
+            results: results || {},
+        });
+    } catch (error) {
+        console.error('Error rendering result:', error);
+        res.status(500).send('Error rendering result');
+    }
 };
+
 
 module.exports.clearUploads = async (req, res) => {
     const uploadDir = path.join(__dirname, '..', 'uploads');
